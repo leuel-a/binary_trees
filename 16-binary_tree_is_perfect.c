@@ -1,52 +1,52 @@
 #include "binary_trees.h"
-/**
- * tree_is_perfect - function that says if a tree is perfect or not
- * it has to be the same quantity of levels in left as right, and also
- * each node has to have 2 nodes or none
- * @tree: tree to check
- * Return: 0 if is not a perfect or other number that is the level of height
- */
-int tree_is_perfect(const binary_tree_t *tree)
-{
-	int l = 0, r = 0;
 
-	if (tree->left && tree->right)
-	{
-		l = 1 + tree_is_perfect(tree->left);
-		r = 1 + tree_is_perfect(tree->right);
-		if (r == l && r != 0 && l != 0)
-			return (r);
-		return (0);
-	}
-	else if (!tree->left && !tree->right)
-	{
-		return (1);
-	}
-	else
-	{
-		return (0);
-	}
-}
 /**
- * binary_tree_is_perfect - perfect or not a tree
- * @tree: tree to check
- * Return: 1 is it is or 0 if not
+ * binary_tree_is_perfect - checks if a binary tree is perfect
+ * @tree: is a pointer to the root node of the tree to check
+ *
+ * Return: If the tree is perfect, it returns 1. Otherwise, it
+ * returns 0.
  */
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {
-	int result = 0;
+	int check, depth, level;
 
 	if (tree == NULL)
-	{
 		return (0);
-	}
-	else
-	{
-		result = tree_is_perfect(tree);
-		if (result != 0)
-		{
-			return (1);
-		}
+	level = 0;
+	depth  = find_depth_left(tree);
+	check = isPerfect(tree, depth, level);
+	return (check);
+}
+
+/**
+ * find_depth_left - finds the depth of the left most leaf
+ * in a binary tree
+ * @tree: is a pointer to the tree to measure the left most
+ * depth
+ *
+ * Return: The depth of the left most node
+ */
+int find_depth_left(const binary_tree_t *tree)
+{
+	return (!tree ? 0 : 1 + find_depth_left(tree->left));
+}
+
+/**
+ * isPerfect - helper function to find if a binary tree is perfect
+ * @depth: this is the left most depth of the tree
+ * @level: this is the level where to the check is happening
+ * @tree: is a pointer to the root node of the tree to check
+ *
+ * Return: If the tree is perfect, it returns 1. Otherwise, it
+ * returns 0.
+ */
+int isPerfect(const binary_tree_t *tree, int depth, int level)
+{
+	if (!tree->left && !tree->right)
+		return (depth == (level + 1));
+	if (!tree->left || !tree->right)
 		return (0);
-	}
+	return (isPerfect(tree->left, depth, level + 1) &&
+			isPerfect(tree->right, depth, level + 1));
 }
